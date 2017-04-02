@@ -2,6 +2,10 @@
 #include <vector>
 #include <cmath>
 
+#ifdef TIMING
+#include <ctime>
+#endif
+
 /**
  * Returns the median value in a given vector A of n numbers. This is
  * the kth element, where k = ceil(n/2), if the vector was sorted.
@@ -34,14 +38,90 @@ int BruteForceMedian(std::vector<int> &input) {
     return 0;
 }
 
+enum TEST_TYPE {
+    SORTED,
+    REVERSED,
+    RANDOMIZED
+};
+
+std::vector<int> generateArray(unsigned long n, TEST_TYPE type) {
+    std::vector<int> generatedArray(n);
+
+    // Fill the array.
+    switch (type) {
+        case SORTED:
+            for (int i = 0; i < n; i++) {
+                generatedArray[i] = i;
+            }
+            break;
+        case REVERSED:
+            for (int i = 0; i < n; i++) {
+                generatedArray[i] = (int) (n - 1);
+            }
+            break;
+        case RANDOMIZED:
+            for (int i = 0; i < n; i++) {
+                generatedArray[i] = (int) (rand() % n);
+            }
+            break;
+    }
+
+    return generatedArray;
+}
+
+void runMethod(std::vector<int> &testVector) {
+#ifdef TIMING
+    clock_t start = clock();
+#endif
+    std::cout << "Test Output: " << BruteForceMedian(testVector) << std::endl;
+#ifdef TIMING
+    clock_t end = clock();
+    std::cout << "Time: " << (end - start) << "ms With Number: " << testVector.size() << std::endl;
+#endif
+}
+
 int main() {
-    std::vector<int> testVector = {0, 1, 2, 3, 4, 5};
-    std::cout << "Test Output: " << BruteForceMedian(testVector) << std::endl;
+    std::cout << "== Sorted Test ==" << std::endl;
 
-    testVector = {1, 5, 3, 9, 4};
-    std::cout << "Test Output: " << BruteForceMedian(testVector) << std::endl;
+    std::vector<int> testVector = generateArray(10, TEST_TYPE::SORTED);
+    runMethod(testVector);
 
-    testVector = {5, 4, 3, 2, 1};
-    std::cout << "Test Output: " << BruteForceMedian(testVector) << std::endl;
+    testVector = generateArray(100, TEST_TYPE::SORTED);
+    runMethod(testVector);
+
+    testVector = generateArray(1000, TEST_TYPE::SORTED);
+    runMethod(testVector);
+
+    testVector = generateArray(10000, TEST_TYPE::SORTED);
+    runMethod(testVector);
+
+    std::cout << "== Reversed Test ==" << std::endl;
+
+    testVector = generateArray(10, TEST_TYPE::REVERSED);
+    runMethod(testVector);
+
+    testVector = generateArray(100, TEST_TYPE::REVERSED);
+    runMethod(testVector);
+
+    testVector = generateArray(1000, TEST_TYPE::REVERSED);
+    runMethod(testVector);
+
+    testVector = generateArray(10000, TEST_TYPE::REVERSED);
+    runMethod(testVector);
+
+    std::cout << "== Random Test ==" << std::endl;
+
+    testVector = generateArray(10, TEST_TYPE::RANDOMIZED);
+    runMethod(testVector);
+
+    testVector = generateArray(100, TEST_TYPE::RANDOMIZED);
+    runMethod(testVector);
+
+    testVector = generateArray(1000, TEST_TYPE::RANDOMIZED);
+    runMethod(testVector);
+
+    testVector = generateArray(10000, TEST_TYPE::RANDOMIZED);
+    runMethod(testVector);
+
     return 0;
 }
