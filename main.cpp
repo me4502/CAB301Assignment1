@@ -39,9 +39,9 @@ int BruteForceMedian(std::vector<int> &input) {
 }
 
 enum TEST_TYPE {
-    SORTED,
-    REVERSED,
-    RANDOMIZED
+    SORTED = 0,
+    REVERSED = 1,
+    RANDOMIZED = 2
 };
 
 std::vector<int> generateArray(unsigned long n, TEST_TYPE type) {
@@ -75,53 +75,36 @@ void runMethod(std::vector<int> &testVector) {
 #endif
     std::cout << "Test Output: " << BruteForceMedian(testVector) << std::endl;
 #ifdef TIMING
-    clock_t end = clock();
-    std::cout << "Time: " << (end - start) << "ms With Number: " << testVector.size() << std::endl;
+    double duration = (std::clock() - start) / (CLOCKS_PER_SEC / 1000.0);
+    std::cout << "Time: " << duration << "ms With Number: " << testVector.size() << std::endl;
 #endif
 }
+
+std::vector<unsigned long> testCases = {10, 100, 1000, 10000, 100000};
 
 int main() {
     std::cout << "== Sorted Test ==" << std::endl;
 
-    std::vector<int> testVector = generateArray(10, TEST_TYPE::SORTED);
-    runMethod(testVector);
+    std::vector<int> testVector;
 
-    testVector = generateArray(100, TEST_TYPE::SORTED);
-    runMethod(testVector);
-
-    testVector = generateArray(1000, TEST_TYPE::SORTED);
-    runMethod(testVector);
-
-    testVector = generateArray(10000, TEST_TYPE::SORTED);
-    runMethod(testVector);
+    for (int i = 0; i < testCases.size(); i++) {
+        testVector = generateArray(testCases[i], TEST_TYPE::SORTED);
+        runMethod(testVector);
+    }
 
     std::cout << "== Reversed Test ==" << std::endl;
 
-    testVector = generateArray(10, TEST_TYPE::REVERSED);
-    runMethod(testVector);
-
-    testVector = generateArray(100, TEST_TYPE::REVERSED);
-    runMethod(testVector);
-
-    testVector = generateArray(1000, TEST_TYPE::REVERSED);
-    runMethod(testVector);
-
-    testVector = generateArray(10000, TEST_TYPE::REVERSED);
-    runMethod(testVector);
+    for (int i = 0; i < testCases.size(); i++) {
+        testVector = generateArray(testCases[i], TEST_TYPE::REVERSED);
+        runMethod(testVector);
+    }
 
     std::cout << "== Random Test ==" << std::endl;
 
-    testVector = generateArray(10, TEST_TYPE::RANDOMIZED);
-    runMethod(testVector);
-
-    testVector = generateArray(100, TEST_TYPE::RANDOMIZED);
-    runMethod(testVector);
-
-    testVector = generateArray(1000, TEST_TYPE::RANDOMIZED);
-    runMethod(testVector);
-
-    testVector = generateArray(10000, TEST_TYPE::RANDOMIZED);
-    runMethod(testVector);
+    for (int i = 0; i < testCases.size(); i++) {
+        testVector = generateArray(testCases[i], TEST_TYPE::RANDOMIZED);
+        runMethod(testVector);
+    }
 
     return 0;
 }
