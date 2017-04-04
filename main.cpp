@@ -80,30 +80,34 @@ void runMethod(std::vector<int> &testVector) {
 #endif
 }
 
-std::vector<unsigned long> testCases = {10, 100, 1000, 10000, 100000};
+std::vector<unsigned long> testCases = {10, 100, 1000, 10000};
+
+#define TEST_COUNT 10
 
 int main() {
-    std::cout << "== Sorted Test ==" << std::endl;
-
     std::vector<int> testVector;
 
-    for (int i = 0; i < testCases.size(); i++) {
-        testVector = generateArray(testCases[i], TEST_TYPE::SORTED);
-        runMethod(testVector);
-    }
+    for (int n = 0; n < TEST_COUNT; n++) {
+        std::cout << "== Sorted Test ==" << std::endl;
 
-    std::cout << "== Reversed Test ==" << std::endl;
+        for (int i = 0; i < testCases.size(); i++) {
+            testVector = generateArray(testCases[i], TEST_TYPE::SORTED);
+            runMethod(testVector);
+        }
 
-    for (int i = 0; i < testCases.size(); i++) {
-        testVector = generateArray(testCases[i], TEST_TYPE::REVERSED);
-        runMethod(testVector);
-    }
+        std::cout << "== Reversed Test ==" << std::endl;
 
-    std::cout << "== Random Test ==" << std::endl;
+        for (int i = 0; i < testCases.size(); i++) {
+            testVector = generateArray(testCases[i], TEST_TYPE::REVERSED);
+            runMethod(testVector);
+        }
 
-    for (int i = 0; i < testCases.size(); i++) {
-        testVector = generateArray(testCases[i], TEST_TYPE::RANDOMIZED);
-        runMethod(testVector);
+        std::cout << "== Random Test ==" << std::endl;
+
+        for (int i = 0; i < testCases.size(); i++) {
+            testVector = generateArray(testCases[i], TEST_TYPE::RANDOMIZED);
+            runMethod(testVector);
+        }
     }
 
     return 0;
