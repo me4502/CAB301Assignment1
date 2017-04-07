@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <sstream>
+#include <fstream>
 
 #ifdef TIMING
 #include <ctime>
@@ -137,7 +138,6 @@ void runMethod(std::vector<int> &testVector) {
 #elif LOGGING
 
 #elif OPERATIONS
-    std::cout << "For n = " << testVector.size() << " operation count is " << operationCount << std::endl;
 #else
     std::cout << "Test Output: " << output << std::endl;
 #endif
@@ -147,6 +147,8 @@ std::vector<unsigned long> testCases = {10, 100, 1000, 10000};
 
 #ifdef TEST
 #define TEST_COUNT 1
+#elif OPERATIONS
+#define TEST_COUNT 100
 #else
 #define TEST_COUNT 10
 #endif
@@ -155,12 +157,16 @@ int main() {
     std::vector<int> testVector;
 
 #ifdef OPERATIONS
-    for (int i = 1; i < pow(2, 14); i *= 2) {
-        for (int j = 0; j < 50; j++) {
+    std::ofstream csvExporter;
+    csvExporter.open("operations.csv");
+    for (int i = 1; i <= 10000; i *= 10) {
+        for (int j = 0; j < TEST_COUNT; j++) {
             testVector = generateArray((unsigned long) i, TEST_TYPE::RANDOMIZED);
             runMethod(testVector);
+            csvExporter << i << "," << operationCount << std::endl;
         }
     }
+    csvExporter.close();
 #else
     for (int n = 0; n < TEST_COUNT; n++) {
         std::cout << "== Sorted Test ==" << std::endl;

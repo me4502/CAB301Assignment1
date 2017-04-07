@@ -36,3 +36,4 @@ fabric.properties
 
 # Custom
 cmake-build-debug/
+*.csv
