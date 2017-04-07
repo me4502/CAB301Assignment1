@@ -7,6 +7,10 @@
 #include <ctime>
 #endif
 
+#ifdef OPERATIONS
+unsigned long long operationCount = 0;
+#endif
+
 /**
  * Returns the median value in a given vector A of n numbers. This is
  * the kth element, where k = ceil(n/2), if the vector was sorted.
@@ -26,16 +30,33 @@ int BruteForceMedian(std::vector<int> &input) {
             // Calculate number of array items that are smaller, and equal.
             if (input[j] < input[i]) {
                 numSmaller ++;
+#ifdef OPERATIONS
+                operationCount += 1;
+#endif
             } else if (input[j] == input[i]) {
                 numEqual ++;
+#ifdef OPERATIONS
+                operationCount += 2;
+#endif
             }
+#ifdef OPERATIONS
+            else {
+                operationCount += 2; // None matched, add 2.
+            }
+#endif
         }
 
         if (numSmaller < k && k <= (numSmaller + numEqual)) {
+#ifdef OPERATIONS
+            operationCount += 2;
+#endif
             return input[i];
         }
     }
 
+#ifdef OPERATIONS
+    operationCount += 1;
+#endif
     return 0;
 }
 
@@ -76,6 +97,8 @@ std::vector<int> generateArray(unsigned long n, TEST_TYPE type) {
 void runMethod(std::vector<int> &testVector) {
 #ifdef TIMING
     clock_t start = clock();
+#elif OPERATIONS
+    operationCount = 0;
 #endif
     int output = BruteForceMedian(testVector);
 #ifdef TIMING
@@ -113,6 +136,8 @@ void runMethod(std::vector<int> &testVector) {
     }
 #elif LOGGING
 
+#elif OPERATIONS
+    std::cout << "For n = " << testVector.size() << " operation count is " << operationCount << std::endl;
 #else
     std::cout << "Test Output: " << output << std::endl;
 #endif
@@ -129,6 +154,14 @@ std::vector<unsigned long> testCases = {10, 100, 1000, 10000};
 int main() {
     std::vector<int> testVector;
 
+#ifdef OPERATIONS
+    for (int i = 1; i < pow(2, 14); i *= 2) {
+        for (int j = 0; j < 50; j++) {
+            testVector = generateArray((unsigned long) i, TEST_TYPE::RANDOMIZED);
+            runMethod(testVector);
+        }
+    }
+#else
     for (int n = 0; n < TEST_COUNT; n++) {
         std::cout << "== Sorted Test ==" << std::endl;
 
@@ -151,6 +184,7 @@ int main() {
             runMethod(testVector);
         }
     }
+#endif
 
 #ifdef TEST
     std::cout << "== Random Length Random Test ==" << std::endl;
