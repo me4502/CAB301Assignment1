@@ -98,16 +98,11 @@ std::vector<int> generateArray(unsigned long n, TEST_TYPE type) {
 }
 
 void runMethod(std::vector<int> &testVector) {
-#ifdef TIMING
-    clock_t start = clock();
-#elif OPERATIONS
+#ifdef OPERATIONS
     operationCount = 0;
 #endif
     int output = BruteForceMedian(testVector);
-#ifdef TIMING
-    double duration = (std::clock() - start) / (CLOCKS_PER_SEC / 1000.0);
-    std::cout << "Time: " << duration << "ms With Number: " << testVector.size() << std::endl;
-#elif TEST
+#ifdef TEST
     std::vector<int> sortedVector(testVector);
     std::sort(sortedVector.begin(), sortedVector.end());
 
@@ -138,8 +133,8 @@ void runMethod(std::vector<int> &testVector) {
         std::cout << testVectorString.str() << std::endl;
     }
 #elif LOGGING
-
 #elif OPERATIONS
+#elif TIMING
 #else
     std::cout << "Test Output: " << output << std::endl;
 #endif
@@ -149,8 +144,8 @@ std::vector<unsigned long> testCases = {10, 100, 1000, 10000};
 
 #ifdef TEST
 #define TEST_COUNT 1
-#elif OPERATIONS
-#define TEST_COUNT 10
+#elif TIMING
+#define TEST_COUNT 20
 #else
 #define TEST_COUNT 10
 #endif
@@ -166,6 +161,33 @@ int main() {
             testVector = generateArray((unsigned long) i, TEST_TYPE::RANDOMIZED);
             runMethod(testVector);
             csvExporter << i << "," << operationCount << std::endl;
+        }
+    }
+    csvExporter.close();
+#elif TIMING
+    std::ofstream csvExporter;
+    csvExporter.open("timings.csv");
+    for (int k = TEST_TYPE::SORTED; k <= TEST_TYPE::RANDOMIZED; k++) {
+        switch(k) {
+            case TEST_TYPE::SORTED:
+                csvExporter << "SORTED,time" << std::endl;
+                break;
+            case TEST_TYPE::REVERSED:
+                csvExporter << "REVERSED,time" << std::endl;
+                break;
+            case TEST_TYPE::RANDOMIZED:
+                csvExporter << "RANDOMIZED,time" << std::endl;
+                break;
+            default:break;
+        }
+        for (int i = 1; i <= 10000; i += (10000 * TEST_COUNT) / (255)) {
+            for (int j = 0; j < TEST_COUNT; j++) {
+                testVector = generateArray((unsigned long) i, (TEST_TYPE) k);
+                clock_t start = clock();
+                runMethod(testVector);
+                double duration = (std::clock() - start) / (CLOCKS_PER_SEC / 1000.0);
+                csvExporter << i << "," << duration << std::endl;
+            }
         }
     }
     csvExporter.close();
