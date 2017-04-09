@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include <sstream>
 #include <fstream>
+#include <iterator>
 
 #ifdef TIMING
 #include <ctime>
@@ -10,6 +10,11 @@
 
 #ifdef OPERATIONS
 unsigned long long operationCount = 0;
+#endif
+
+#ifdef TEST
+#include <algorithm>
+#include <sstream>
 #endif
 
 /**
@@ -47,17 +52,14 @@ int BruteForceMedian(std::vector<int> &input) {
 #endif
         }
 
-        if (numSmaller < k && k <= (numSmaller + numEqual)) {
 #ifdef OPERATIONS
-            operationCount += 2;
+        operationCount += 2;
 #endif
+        if (numSmaller < k && k <= (numSmaller + numEqual)) {
             return input[i];
         }
     }
 
-#ifdef OPERATIONS
-    operationCount += 1;
-#endif
     return 0;
 }
 
@@ -148,7 +150,7 @@ std::vector<unsigned long> testCases = {10, 100, 1000, 10000};
 #ifdef TEST
 #define TEST_COUNT 1
 #elif OPERATIONS
-#define TEST_COUNT 100
+#define TEST_COUNT 10
 #else
 #define TEST_COUNT 10
 #endif
@@ -159,7 +161,7 @@ int main() {
 #ifdef OPERATIONS
     std::ofstream csvExporter;
     csvExporter.open("operations.csv");
-    for (int i = 1; i <= 10000; i *= 10) {
+    for (int i = 1; i <= 10000; i += (10000 * TEST_COUNT) / 255) {
         for (int j = 0; j < TEST_COUNT; j++) {
             testVector = generateArray((unsigned long) i, TEST_TYPE::RANDOMIZED);
             runMethod(testVector);
@@ -168,23 +170,22 @@ int main() {
     }
     csvExporter.close();
 #else
+    std::cout << "== Sorted Test ==" << std::endl;
     for (int n = 0; n < TEST_COUNT; n++) {
-        std::cout << "== Sorted Test ==" << std::endl;
-
         for (int i = 0; i < testCases.size(); i++) {
             testVector = generateArray(testCases[i], TEST_TYPE::SORTED);
             runMethod(testVector);
         }
-
-        std::cout << "== Reversed Test ==" << std::endl;
-
+    }
+    std::cout << "== Reversed Test ==" << std::endl;
+    for (int n = 0; n < TEST_COUNT; n++) {
         for (int i = 0; i < testCases.size(); i++) {
             testVector = generateArray(testCases[i], TEST_TYPE::REVERSED);
             runMethod(testVector);
         }
-
-        std::cout << "== Random Test ==" << std::endl;
-
+    }
+    std::cout << "== Random Test ==" << std::endl;
+    for (int n = 0; n < TEST_COUNT; n++) {
         for (int i = 0; i < testCases.size(); i++) {
             testVector = generateArray(testCases[i], TEST_TYPE::RANDOMIZED);
             runMethod(testVector);
